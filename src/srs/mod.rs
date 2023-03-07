@@ -4,14 +4,14 @@ pub mod utils;
 use crate::srs::utils::*;
 
 #[derive(Serialize, Deserialize)]
-struct SRSStep {
+pub struct SRSStep {
     origin: String,
     steps_from_origin: usize,
     current_state: String,
 }
 
 impl SRSStep {
-    fn next_step(&self) -> Result<Self, String> {
+    pub fn next_step(&self) -> Result<Self, String> {
         let mut ret_string = String::new();
         let srs = &self.current_state;
         for (i, c) in srs.char_indices() {
