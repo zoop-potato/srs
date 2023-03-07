@@ -2,7 +2,9 @@
 #![allow(unused_imports)]
 
 use serde::{Deserialize, Serialize};
+use std::io::prelude::*;
 use std::fs::*;
+use ron::to_string;
 
 fn main() {}
 
@@ -100,4 +102,11 @@ fn list_scopes_of_every_index(s: String) {
             .collect::<Vec<(usize, usize)>>();
         println!("{:?}", scopes_of_index);
     }
+}
+
+#[derive(Serialize, Deserialize)]
+struct SRSStep {
+    origin: String,
+    steps_from_origin: usize,
+    current_state: String,
 }
