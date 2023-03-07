@@ -6,6 +6,10 @@ use std::io::prelude::*;
 use std::fs::*;
 use ron::to_string;
 
+mod srs;
+use crate::srs::{utils::*, *};
+
+
 fn main() {}
 
 fn expand_srs(s: &str) -> Result<String, String> {
@@ -21,62 +25,6 @@ fn expand_srs(s: &str) -> Result<String, String> {
     Ok(ret_string)
 }
 
-/// s: The String slice to search in
-/// index: The index into s that you are to find the scope of
-/// depth: How many scopes beyond the first to look for as the return value
-fn find_scope_of_index(s: &str, index: usize, depth: u8) -> Result<&str, String> {
-    let mut scope_starts: Vec<usize> = vec![];
-    let mut containing_scopes: Vec<&str> = vec![];
-
-    for (i, c) in s.char_indices() {
-        match c {
-            '(' => scope_starts.push(i),
-            ')' => {
-                let start = scope_starts
-                    .pop()
-                    .ok_or::<String>("Invalid Parans".into())?;
-                if start <= index && index <= i {
-                    containing_scopes.push(s.get(start..=i).unwrap());
-                }
-            }
-            _ => {}
-        }
-    }
-    if depth as usize >= containing_scopes.len() {
-        return Err("Depth is out of bounds".into());
-    }
-    Ok(containing_scopes[depth as usize])
-}
-
-fn find_all_scopes(s: &str) -> Result<Vec<(usize, usize)>, String> {
-    let mut scopes: Vec<(usize, usize)> = vec![];
-    let mut scope_starts: Vec<usize> = vec![];
-
-    for (i, c) in s.char_indices() {
-        match c {
-            '(' => scope_starts.push(i),
-            ')' => {
-                let start = scope_starts
-                    .pop()
-                    .ok_or::<String>("Invalid Parans".into())?;
-                scopes.push((start, i));
-            }
-            _ => {}
-        }
-    }
-    scopes.sort_by(|(a, _), (b, _)| a.cmp(b).reverse());
-    Ok(scopes)
-}
-
-fn trim_scope(s: &str) -> Result<&str, String> {
-    s.get(1..s.len() - 1).ok_or::<String>("Shrug".into())
-}
-
-fn oe() -> String {
-    "((OE))".to_string()
-}
-
-//
 fn print_loop(s: String) {
     let mut the_big_list = vec![s];
     println!("1: {}", the_big_list.last().unwrap());
@@ -102,11 +50,4 @@ fn list_scopes_of_every_index(s: String) {
             .collect::<Vec<(usize, usize)>>();
         println!("{:?}", scopes_of_index);
     }
-}
-
-#[derive(Serialize, Deserialize)]
-struct SRSStep {
-    origin: String,
-    steps_from_origin: usize,
-    current_state: String,
 }
