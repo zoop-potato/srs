@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 pub mod utils;
+pub mod scope;
 use crate::srs::utils::*;
 
 #[derive(Serialize, Deserialize)]
